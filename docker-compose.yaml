@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: togglefeaturesdb
+    environment:
+      POSTGRES_USER: userdb
+      POSTGRES_PASSWORD: passworddb
+      POSTGRES_DB: togglefeaturesdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data: 
