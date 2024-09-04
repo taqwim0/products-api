@@ -2,16 +2,29 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:latest
-    container_name: togglefeaturesdb
+    image: postgres:15
     environment:
       POSTGRES_USER: userdb
       POSTGRES_PASSWORD: passworddb
-      POSTGRES_DB: togglefeaturesdb
+      POSTGRES_DB: products_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
+
+  app:
+    # build: .
+    image: taqwimn/products-api-app:v1.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=userdb
+      - DB_PASSWORD=passworddb
+      - DB_NAME=products_db
 
 volumes:
-  db_data: 
+  postgres_data:

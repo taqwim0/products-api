@@ -1,76 +1,136 @@
-## Feature Toggle Management Application API
+## Products API Application
 
 ### Overview
-This is the backend for the Feature Toggle Management application, built with Golang. It provides a RESTful API for managing feature toggles with JWT-based authentication and uses PostgreSQL as the database. The application provides JWT-based authentication and supports CRUD operations for managing feature toggles.
+This repository contains a simple Products API built with Go and PostgreSQL. The application is containerized using Docker and can be easily set up and run locally using Docker Compose.
 
 ### Prerequisites
-* Go (Golang) 1.16 or later
+* Go (Golang) 1.23 or later
 * Docker and Docker Compose (for running PostgreSQL database)
 * Git (for version control)
 
 ### Setup
 #### 1. Clone the Repository
 ```
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/taqwim0/products-api
+cd products-api
 ```
 
-#### 2. Configure Environment Variables
-Create a `.env` file in the backend directory and set the following environment variables:
+#### 2. Install Dependencies
 ```
-JWT_SECRET=your_jwt_secret
+go mod tidy
+```
+
+#### 3. Configure Environment Variables
+Create an `app.env` file in the repository and set the following environment variables:
+```
 DB_HOST=localhost
+DB_USER=userdb
+DB_PASSWORD=passworddb
+DB_NAME=products_db
 DB_PORT=5432
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
 ```
 
-#### 3. Run PostgreSQL with Docker
-Create a docker-compose.yml file to spin up a PostgreSQL instance:
-```
-version: '3'
-services:
-  db:
-    image: postgres:13
-    restart: always
-    environment:
-      POSTGRES_USER: your_db_user
-      POSTGRES_PASSWORD: your_db_password
-      POSTGRES_DB: your_db_name
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
-volumes:
-  db_data:
-```
+#### 4. Run PostgreSQL with Docker
 Run the following command to start the database:
 ```
 docker-compose up -d
 ```
 
-#### 4. Install Dependencies
+Open postgreSQL application (DBeaver / pgAdmin) to establish database connection configuration on your local for table creation & data samples insertion. You can check the SQL queries on:
 ```
-go mod tidy
+files/table_creation.sql (for table creation)
+files/sample_products.sql (for data samples insertion)
 ```
 
-#### 5. Run the Backend Application
+#### 5. Run the Backend Application with Docker
 ```
-go run main.go
+docker-compose up --build
 ``` 
 
-### Backend Libraries and Purpose
-* `github.com/dgrijalva/jwt-go`: Library for creating and verifying JSON Web Tokens (JWTs), used for authentication.
-* `github.com/go-sql-driver/mysql`: Go MySQL driver for interfacing with MySQL databases (you can replace this with pq for PostgreSQL).
-* `github.com/gorilla/mux`: A powerful HTTP router and URL matcher for building Go web applications.
-* `github.com/joho/godotenv`: Used for loading environment variables from a .env file.
-* `database/sql`: Standard library for SQL database interactions in Go, providing a generic interface for SQL databases.
-
-### Running the Backend 
+### Running the Application 
 Ensure the backend is running on `http://localhost:8080`.
 
+### API Documentation
+
+#### Get All Products
+
+```http
+  GET localhost:8080/products
+```
+
+#### Get Product by ID
+
+```http
+  GET localhost:8080/product/detail/{id}
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `int` | **Required**. ID of product to fetch. |
+
+#### Create Product
+
+```http
+  POST localhost:8080/product/add/
+
+  Request Body JSON Sample:
+  {
+    "name": "Wireless Charger Electric",
+    "description": "Fast wireless charger for smartphones.",
+    "price": 200000,
+    "variety": "Accessories",
+    "rating": 4.5,
+    "stock": 200
+   }
+
+```
+| Body | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `name`      | `string` | **Required**. Product name. |
+| `description`      | `string` | **Required**. Product description. |
+| `price`      | `float` | **Required**. Product price. |
+| `variety`      | `string` | **Required**. Product variety. |
+| `rating`      | `float` | **Required**. Product rating. |
+| `stock`      | `int` | **Required**. Product stock. |
+
+#### Update Product
+
+```http
+  PUT localhost:8080/product/update/{id}
+
+  Request Body JSON Sample:
+  {
+    "name": "Wireless Charger Electric for All",
+    "description": "Fast wireless charger for smartphones.",
+    "price": 200000,
+    "variety": "Accessories",
+    "rating": 4.5,
+    "stock": 200
+   }
+
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `int` | **Required**. ID of product to update. |
+
+| Body | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `name`      | `string` | **Required**. Product name. |
+| `description`      | `string` | **Required**. Product description. |
+| `price`      | `float` | **Required**. Product price. |
+| `variety`      | `string` | **Required**. Product variety. |
+| `rating`      | `float` | **Required**. Product rating. |
+| `stock`      | `int` | **Required**. Product stock. |
+
+#### Delete Product
+
+```http
+  DELETE localhost:8080/product/delete/{id}
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `int` | **Required**. ID of product to delete. |
+
+
 ### Troubleshooting
-* **CORS Issues**: Ensure CORS headers are correctly configured on the backend.
-* **Database Connection Errors**: Check your database connection details in the .env file and ensure the database is running.
+* **Database Connection Errors**: Ensure that the database credentials in docker-compose.yaml match those set in PostgreSQL.
+* **Port Conflicts**: Make sure no other service is using ports 5432 (PostgreSQL) or 8080 (API) on your machine.
