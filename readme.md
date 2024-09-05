@@ -48,7 +48,10 @@ docker-compose up --build
 ``` 
 
 ### Running the Application 
-Ensure the backend is running on `http://localhost:8080`.
+Ensure the backend is running on `http://localhost:8080`. You can check & import the API list on your local Postman application from postman collection file located at
+```
+files/products-api.postman_collection.json
+```
 
 ### API Documentation
 
