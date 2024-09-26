@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// notes
+
 func RegisterRoutes() *mux.Router {
 	router := mux.NewRouter()
 
